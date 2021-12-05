@@ -14,16 +14,20 @@ declare(strict_types=1);
 
 namespace plugins\oAuthManager2;
 
-class Store extends Config
+class Store
 {
     /** @var \dcCore dcCore instance */
     public $core;
 
-    public function __construct(\dcCore $core)
+    /** @var string Redirect URI */
+    protected $redirect_uri;
+
+    public function __construct(\dcCore $core, string $redirect_uri)
     {
-        $this->core = $core;
-        $this->core->blog->settings->addNamespace(self::getPluginId());
-        $this->core->auth->user_prefs->addWorkspace(self::getPluginId());
+        $this->core         = $core;
+        $this->redirect_uri = $redirect_uri;
+        $this->core->blog->settings->addNamespace(PLUGIN_ID);
+        $this->core->auth->user_prefs->addWorkspace(PLUGIN_ID);
     }
 
     public function getConsumer(string $provider): array
@@ -33,7 +37,7 @@ class Store extends Config
             'secret' => '',
         ];
 
-        $rs = $this->core->blog->settings->{self::getPluginId()}->get($provider);
+        $rs = $this->core->blog->settings->{PLUGIN_ID}->get($provider);
         if (is_string($rs)) {
             $rs = json_decode($rs, true);
         }
@@ -51,7 +55,7 @@ class Store extends Config
 
     public function setConsumer(string $provider, string $key = '', string $secret = ''): void
     {
-        $this->core->blog->settings->{self::getPluginId()}->put(
+        $this->core->blog->settings->{PLUGIN_ID}->put(
             $provider,
             json_encode(['key' => $key, 'secret' => $secret]),
             'string',
@@ -71,7 +75,7 @@ class Store extends Config
             'scope'        => [],
         ];
 
-        $rs = $this->core->auth->user_prefs->{self::getPluginId()}->get($provider);
+        $rs = $this->core->auth->user_prefs->{PLUGIN_ID}->get($provider);
         if (!empty($rs) && is_array($rs)) {
             $res = [
                 'provider'     => $rs['provider'] ?? '',
@@ -89,7 +93,7 @@ class Store extends Config
 
     public function setUser(string $provider, string $user, string $access_token = '', string $refresh_token = '', int $expiry = 0, array $scope = []): void
     {
-        $this->core->auth->user_prefs->{self::getPluginId()}->put($provider, [
+        $this->core->auth->user_prefs->{PLUGIN_ID}->put($provider, [
             'provider'      => $provider,
             'access_token'  => $access_token,
             'refresh_token' => $refresh_token,
@@ -100,12 +104,12 @@ class Store extends Config
 
     public function getState(string $state): string
     {
-        if (isset($_SESSION[self::getPluginId()])
-            && isset($_SESSION[self::getPluginId()]['state'])
-            && is_array($_SESSION[self::getPluginId()]['state'])
-            && array_key_exists($state, $_SESSION[self::getPluginId()]['state'])
+        if (isset($_SESSION[PLUGIN_ID])
+            && isset($_SESSION[PLUGIN_ID]['state'])
+            && is_array($_SESSION[PLUGIN_ID]['state'])
+            && array_key_exists($state, $_SESSION[PLUGIN_ID]['state'])
         ) {
-            return $_SESSION[self::getPluginId()]['state'][$state];
+            return $_SESSION[PLUGIN_ID]['state'][$state];
         }
 
         return '';
@@ -113,40 +117,40 @@ class Store extends Config
 
     public function setState(string $provider, string $state): void
     {
-        $_SESSION[self::getPluginId()]['state'][$state] = $provider;
+        $_SESSION[PLUGIN_ID]['state'][$state] = $provider;
     }
 
     public function delState(string $provider): void
     {
-        if (isset($_SESSION[self::getPluginId()])
-            && isset($_SESSION[self::getPluginId()]['state'])
-            && is_array($_SESSION[self::getPluginId()]['state'])
-            && false !== ($state = array_search($provider, $_SESSION[self::getPluginId()]['state']))
+        if (isset($_SESSION[PLUGIN_ID])
+            && isset($_SESSION[PLUGIN_ID]['state'])
+            && is_array($_SESSION[PLUGIN_ID]['state'])
+            && false !== ($state = array_search($provider, $_SESSION[PLUGIN_ID]['state']))
         ) {
-            unset($_SESSION[self::getPluginId()]['state'][$state]);
+            unset($_SESSION[PLUGIN_ID]['state'][$state]);
         }
     }
 
     public function delStates(): void
     {
-        if (isset($_SESSION[self::getPluginId()])
-            && isset($_SESSION[self::getPluginId()]['state'])
+        if (isset($_SESSION[PLUGIN_ID])
+            && isset($_SESSION[PLUGIN_ID]['state'])
         ) {
-            unset($_SESSION[self::getPluginId()]['state']);
+            unset($_SESSION[PLUGIN_ID]['state']);
         }
     }
 
     public function setRedir(string $redir): void
     {
-        $_SESSION[self::getPluginId()]['redir'] = $redir;
+        $_SESSION[PLUGIN_ID]['redir'] = $redir;
     }
 
     public function getRedir(): string
     {
-        if (isset($_SESSION[self::getPluginId()])
-            && isset($_SESSION[self::getPluginId()]['redir'])
+        if (isset($_SESSION[PLUGIN_ID])
+            && isset($_SESSION[PLUGIN_ID]['redir'])
         ) {
-            return $_SESSION[self::getPluginId()]['redir'];
+            return $_SESSION[PLUGIN_ID]['redir'];
         }
 
         return self::getRedirectUri();
@@ -154,10 +158,10 @@ class Store extends Config
 
     public function delRedir(): void
     {
-        if (isset($_SESSION[self::getPluginId()])
-            && isset($_SESSION[self::getPluginId()]['redir'])
+        if (isset($_SESSION[PLUGIN_ID])
+            && isset($_SESSION[PLUGIN_ID]['redir'])
         ) {
-            unset($_SESSION[self::getPluginId()]['redir']);
+            unset($_SESSION[PLUGIN_ID]['redir']);
         }
     }
 }

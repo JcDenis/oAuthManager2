@@ -15,7 +15,7 @@ if (!defined('DC_RC_PATH')) {
 }
 
 $this->registerModule(
-    'oAuthManager2',
+    'OAuth2 manager',
     'Manage OAuth2 services',
     'Jean-Christian Denis and contributors',
     '0.1.0',

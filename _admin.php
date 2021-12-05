@@ -45,10 +45,10 @@ class Admin extends Core
     private function addAdminMenuItem(\ArrayObject $_menu): void
     {
         $_menu['Plugins']->addItem(
-            self::getPluginName(),
-            $this->core->adminurl->get('admin.plugin.' . self::getPluginId()),
-            \dcPage::getPF(self::getPluginId() . '/icon.png'),
-            preg_match('/' . preg_quote($this->core->adminurl->get('admin.plugin.' . self::getPluginId())) . '(&.*)?$/', $_SERVER['REQUEST_URI']),
+            __($this->core->plugins->moduleInfo(PLUGIN_ID, 'name')),
+            $this->core->adminurl->get('admin.plugin.' . PLUGIN_ID),
+            \dcPage::getPF(PLUGIN_ID . '/icon.png'),
+            preg_match('/' . preg_quote($this->core->adminurl->get('admin.plugin.' . PLUGIN_ID)) . '(&.*)?$/', $_SERVER['REQUEST_URI']),
             $this->core->auth->isSuperAdmin()
         );
     }
@@ -56,12 +56,12 @@ class Admin extends Core
     public static function registerDashboardFavorites(\dcCore $core, \dcFavorites $favs): void
     {
         $favs->register(
-            self::getPluginId(),
+            PLUGIN_ID,
             [
-                'title'       => self::getPluginName(),
-                'url'         => $core->adminurl->get('admin.plugin.' . self::getPluginId()),
-                'small-icon'  => \dcPage::getPF(self::getPluginId() . '/icon.png'),
-                'large-icon'  => \dcPage::getPF(self::getPluginId() . '/icon-b.png'),
+                'title'       => __($core->plugins->moduleInfo(PLUGIN_ID, 'name')),
+                'url'         => $core->adminurl->get('admin.plugin.' . PLUGIN_ID),
+                'small-icon'  => \dcPage::getPF(PLUGIN_ID . '/icon.png'),
+                'large-icon'  => \dcPage::getPF(PLUGIN_ID . '/icon-b.png'),
                 'permissions' => null,
             ]
         );
@@ -87,7 +87,7 @@ class Admin extends Core
         }
         if (!empty($lines)) {
             echo
-            '<div class="fieldset"><h5 id="' . self::getPluginId() . '_prefs">' . self::getPluginName() . '</h5>' .
+            '<div class="fieldset"><h5 id="' . PLUGIN_ID . '_prefs">' . __($core->plugins->moduleInfo(PLUGIN_ID, 'name')) . '</h5>' .
             '<div>' . implode('', $lines) . '</div>' .
             '</div>';
         }

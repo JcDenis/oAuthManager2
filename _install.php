@@ -14,17 +14,31 @@ declare(strict_types=1);
 
 namespace plugins\oAuthManager2;
 
-class Install extends Config
+class Install
 {
+    private static function getDotclearMinimum(\dcCore $core): string
+    {
+        $requires = $core->plugins->moduleInfo(PLUGIN_ID, 'requires');
+        if (is_array($requires)) {
+            foreach ($requires as $dep) {
+                if (is_array($dep) && $dep[0] == 'core') {
+                    return $dep[1];
+                }
+            }
+        }
+
+        return '2.0';
+    }
+
     private static function getDotclearVersion(\dcCore $core): bool
     {
         return method_exists('\dcUtils', 'versionsCompare')
-            && \dcUtils::versionsCompare(DC_VERSION, self::getDotclearMin(), '>=', false);
+            && \dcUtils::versionsCompare(DC_VERSION, self::getDotclearMinimum($core), '>=', false);
     }
 
     private static function getPluginVersion(\dcCore $core): string
     {
-        $version = $core->getVersion(self::getPluginId());
+        $version = $core->getVersion(PLUGIN_ID);
 
         return is_string($version) ? $version : '0';
     }
@@ -32,8 +46,8 @@ class Install extends Config
     private static function setPluginVersion(\dcCore $core): void
     {
         $core->setVersion(
-            self::getPluginId(),
-            $core->plugins->moduleInfo(self::getPluginId(), 'version')
+            PLUGIN_ID,
+            $core->plugins->moduleInfo(PLUGIN_ID, 'version')
         );
     }
 
@@ -41,7 +55,7 @@ class Install extends Config
     {
         return version_compare(
             self::getPluginVersion($core),
-            $core->plugins->moduleInfo(self::getPluginId(), 'version'),
+            $core->plugins->moduleInfo(PLUGIN_ID, 'version'),
             '<'
         );
     }
@@ -54,8 +68,8 @@ class Install extends Config
         if (!self::getDotclearVersion($core)) {
             throw new \Exception(sprintf(
                 '%s requires Dotclear %s',
-                self::getPluginId(),
-                self::getDotclearMin()
+                PLUGIN_ID,
+                self::getDotclearMinimum($core)
             ));
         }
         self::setPluginVersion($core);

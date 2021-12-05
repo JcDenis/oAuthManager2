@@ -56,7 +56,7 @@ class Index extends Core
             $this->setDisabledProviders($disabled);
 
             \dcPage::addSuccessNotice(__('Configuration successfully updated'));
-            $this->core->adminurl->redirect('admin.plugin', ['p' => self::getPluginId()]);
+            $this->core->adminurl->redirect('admin.plugin', ['p' => PLUGIN_ID]);
         } catch (\Exception $e) {
             $this->core->error->add($e->getMessage());
         }
@@ -67,16 +67,16 @@ class Index extends Core
         $bc = empty($_REQUEST['config']) ?
             [__('Providers') => ''] :
             [
-                __('Providers') => $this->core->adminurl->get('admin.plugin.' . self::getPluginId()), 
-                __('Configure Provider') => ''
+                __('Providers')          => $this->core->adminurl->get('admin.plugin.' . PLUGIN_ID),
+                __('Configure Provider') => '',
             ];
 
         echo
-        '<html><head><title>' . self::getPluginName() . '</title></head><body>' .
+        '<html><head><title>' . __($this->core->plugins->moduleInfo(PLUGIN_ID, 'name')) . '</title></head><body>' . PLUGIN_ID .
         \dcPage::notices() .
         \dcPage::breadcrumb(array_merge([
-            __('Plugins')         => '',
-            self::getPluginName() => '',
+            __('Plugins') => '',
+            __($this->core->plugins->moduleInfo(PLUGIN_ID, 'name')) => '',
         ], $bc));
 
         if (empty($_REQUEST['config'])) {
@@ -93,14 +93,14 @@ class Index extends Core
         if (!$this->checkRedirectUri(true)) {
             echo '<p class="warning">' . sprintf(
                 __('OAuth2 redirect URI is based on DC_AMDIN_URL or OAUTH2_REDIRECT_URI from Dotclear configuration file and is set to %s, please fix error.'),
-                $this->getRedirectUri()
+                self::getRedirectUri()
             ) . '</p>';
 
             return;
         }
 
         echo
-        '<form action="' . $this->core->adminurl->get('admin.plugin.' . self::getPluginId()) . '" method="post" id="form-actions">' .
+        '<form action="' . $this->core->adminurl->get('admin.plugin.' . PLUGIN_ID) . '" method="post" id="form-actions">' .
         '<table><caption class="hidden">' . __('Providers') . '</caption><thead><tr>' .
         '<th class="first" colspan="2">' . __('Provider') . '</td>' .
         '<th scope="col">' . __('Credentials') . '</td>' .
@@ -124,7 +124,7 @@ class Index extends Core
             '</label></td>' .
             '<td class="minimal nowrap">' . (
                 $this->services->hasDisabledProvider($provider::getId()) ? '' :
-                '<a class="module-config" href="' . $this->core->adminurl->get('admin.plugin.' . self::getPluginId(), ['config' => $provider::getId()]) .
+                '<a class="module-config" href="' . $this->core->adminurl->get('admin.plugin.' . PLUGIN_ID, ['config' => $provider::getId()]) .
                 '" title="' . sprintf(__("Configure provider '%s'"), $provider::getName()) . '">' . html::escapeHTML(__('Configure')) . '</a>'
             ) . '</td>' .
             '<td class="maximal">' . html::escapeHTML($provider::getDescription()) . '</td>' .
@@ -145,14 +145,14 @@ class Index extends Core
 
     private function displayConfigurator(): void
     {
-        $back_url = $_REQUEST['redir'] ?? $this->core->adminurl->get('admin.plugin.' . self::getPluginId());
+        $back_url = $_REQUEST['redir'] ?? $this->core->adminurl->get('admin.plugin.' . PLUGIN_ID);
 
         if (!$this->checkRedirectUri() || null === $this->provider) {
             echo
             '<p class="warning">' . __('Unknow provider') . '</p>' .
             '<p><a class="back" href="' . $back_url . '">' . __('Back') . '</a></p>';
         } else {
-            $redir = $_REQUEST['redir'] ?? $this->core->adminurl->get('admin.plugin.' . self::getPluginId(), ['config' => $this->provider::getId()]);
+            $redir = $_REQUEST['redir'] ?? $this->core->adminurl->get('admin.plugin.' . PLUGIN_ID, ['config' => $this->provider::getId()]);
 
             switch (strtolower($this->provider::getProtocol())) {
                 case 'oauth2':
@@ -167,7 +167,7 @@ class Index extends Core
             echo '
             <h3>' . sprintf(__('"%s" application credentials'), $this->provider::getName()) . '</h3>
             <p><a class="back" href="' . $back_url . '">' . __('Back') . '</a></p>
-            <form action="' . $this->core->adminurl->get('admin.plugin.' . self::getPluginId()) . '" method="post" id="form-actions">' .
+            <form action="' . $this->core->adminurl->get('admin.plugin.' . PLUGIN_ID) . '" method="post" id="form-actions">' .
             $res .
             '<p class="clear"><input type="submit" name="save" value="' . __('Save') . '" />' .
             form::hidden('config', $this->provider::getId()) .
@@ -205,7 +205,7 @@ class Index extends Core
         '<h5>' . __('Configuration:') . '</h5><ul class="nice">' .
         '<li><a href="' . $this->provider::getConsoleUrl() . '">' . __('Go to client console to configure app.') . '</a></li>' .
         '<li><strong>' . __('Callback URL:') . '</strong> ' . self::getRedirectUri() . '</li>' .
-        '<li><strong>' . __('Default scope:') .'</strong> ' . $scope . '</li>' .
+        '<li><strong>' . __('Default scope:') . '</strong> ' . $scope . '</li>' .
         '</ul>' .
         '</div>';
     }

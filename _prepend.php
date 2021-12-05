@@ -12,6 +12,10 @@
  */
 declare(strict_types=1);
 
+namespace plugins\oAuthManager2;
+
+const PLUGIN_ID = 'oAuthManager2';
+
 if (!defined('DC_RC_PATH') || !defined('DC_CONTEXT_ADMIN')) {
     return;
 }
@@ -20,6 +24,6 @@ if (!defined('DC_RC_PATH') || !defined('DC_CONTEXT_ADMIN')) {
 require_once dirname(__FILE__) . '/inc/OAuth2/_common.php';
 
 /* Plugin autoloader */
-foreach (['Config', 'Store', 'Core'] as $class) {
+foreach (['Store', 'Core'] as $class) {
     $__autoload['plugins\\oAuthManager2\\' . $class] = dirname(__FILE__) . '/inc/' . $class . '.php';
 }

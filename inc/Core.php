@@ -17,7 +17,7 @@ namespace plugins\oAuthManager2;
 use http;
 use OAuth2\Services;
 
-class Core extends Config
+class Core
 {
     /** @var \dcCore dcCore instance */
     protected $core;
@@ -31,7 +31,7 @@ class Core extends Config
     public function __construct(\dcCore $core)
     {
         $this->core     = $core;
-        $this->store    = new Store($core);
+        $this->store    = new Store($core, self::getRedirectUri());
         $this->services = new Services($this->getDisabledProviders());
 
         try {
@@ -73,14 +73,19 @@ class Core extends Config
             && !$this->services->hasDisabledProvider($provider);
     }
 
+    public static function getRedirectUri(): string
+    {
+        return defined('OAUTH2_REDIRECT_URI') ? OAUTH2_REDIRECT_URI : DC_ADMIN_URL;
+    }
+
     public function checkRedirectUri(bool $add_error = false): bool
     {
-        $https = false !== strpos($this->getRedirectUri(), 'https://');
+        $https = false !== strpos(self::getRedirectUri(), 'https://');
         if (!$https && $add_error) {
             $this->core->error->add(__('Oauth2 redirect URI must use secured protocol.'));
         }
 
-        $no_local = false === strpos($this->getRedirectUri(), 'localhost');
+        $no_local = false === strpos(self::getRedirectUri(), 'localhost');
         if (!$no_local && $add_error) {
             $this->core->error->add(__('Oauth2 services does not work on local network.'));
         }
@@ -126,9 +131,9 @@ class Core extends Config
                 $this->revokeAccessToken();
             }
         } catch (\Exception $e) {
-            if (empty($_REQUEST[self::getPluginId() . 'error'])) { //prevent loop on php error
+            if (empty($_REQUEST[PLUGIN_ID . 'error'])) { //prevent loop on php error
                 \dcPage::addErrorNotice($e->getMessage());
-                http::redirect($this->store->getRedir() . (strpos($this->store->getRedir(), '?') ? '&' : '?') . self::getPluginId() . 'error=1');
+                http::redirect($this->store->getRedir() . (strpos($this->store->getRedir(), '?') ? '&' : '?') . PLUGIN_ID . 'error=1');
             }
         }
     }
@@ -199,7 +204,7 @@ class Core extends Config
 
     public function getDisabledProviders(): array
     {
-        $disabled = $this->core->blog->settings->{self::getPluginId()}->disabled;
+        $disabled = $this->core->blog->settings->{PLUGIN_ID}->disabled;
         if (is_string($disabled)) {
             $disabled = json_decode($disabled);
         }
@@ -212,7 +217,7 @@ class Core extends Config
 
     public function setDisabledProviders(array $providers): void
     {
-        $this->core->blog->settings->{self::getPluginId()}->put('disabled', json_encode($providers));
+        $this->core->blog->settings->{PLUGIN_ID}->put('disabled', json_encode($providers));
     }
 
     public function getProviderLogo(string $provider, bool $big = false, bool $full = true): string
@@ -223,14 +228,14 @@ class Core extends Config
         $logo             = new \arrayObject();
         $logo['provider'] = $provider;
         $logo['big']      = $big;
-        $logo['file']     = $this->core->plugins->moduleRoot(self::getPluginId()) . $image;
-        $logo['url']      = $this->core->adminurl->get('load.plugin.file', ['pf' => self::getPluginId() . $image]);
+        $logo['file']     = $this->core->plugins->moduleRoot(PLUGIN_ID) . $image;
+        $logo['url']      = $this->core->adminurl->get('load.plugin.file', ['pf' => PLUGIN_ID . $image]);
 
         $this->core->callBehavior('getOAuth2ProviderLogo', $logo, $this->core);
 
         $url = file_exists($logo['file']) ?
             $logo['url'] :
-            $this->core->adminurl->get('load.plugin.file', ['pf' => self::getPluginId() . '/icon' . $big . '.png']);
+            $this->core->adminurl->get('load.plugin.file', ['pf' => PLUGIN_ID . '/icon' . $big . '.png']);
 
         return !$full ? $url : '<img alt="' . $provider . '" src="' . $url . '" /> ';
     }
