@@ -184,7 +184,7 @@ class Index extends Core
         }
         $consumer = $this->store->getConsumer($this->provider::getId());
         if (!empty($_POST['save'])) {
-            $this->store->setConsumer($this->provider::getId(), $_POST['consumer_key'], $_POST['consumer_secret']);
+            $this->store->setConsumer($this->provider::getId(), $_POST['consumer_key'], $_POST['consumer_secret'], $_POST['consumer_domain']);
             \dcPage::addSuccessNotice(__('Configuration successfully updated'));
             http::redirect($redir);
         }
@@ -193,6 +193,12 @@ class Index extends Core
         return
         '<div class="two-boxes">' .
         '<h5>' . __('Credentials:') . '</h5>' .
+        (!$this->provider->requireDomain() ? form::hidden('consumer_domain', '') :
+            '<p><label class="classic" for="consumer_domain">' .
+            __('Domain: (Request base URL)') . '<br />' .
+            form::field('consumer_domain', 80, 255, html::escapeHTML($consumer['domain'])) . '</label>' .
+            '</p>'
+        ) .
         '<p><label class="classic" for="consumer_key">' .
         __('Client ID: (Consumer key)') . '<br />' .
         form::field('consumer_key', 80, 255, html::escapeHTML($consumer['key'])) . '</label>' .

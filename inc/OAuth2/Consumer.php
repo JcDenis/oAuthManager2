@@ -22,16 +22,21 @@ class Consumer
     /** @var string Consumer secret */
     private $secret = '';
 
+    /** @var string Consumer domain uri */
+    private $domain = '';
+
     /**
      * Consumer constructor
      *
      * @param string    $key            Consumer key
      * @param string    $secret         Consumer secret
+     * @param string    $domain         Consumer domain
      */
-    public function __construct(string $key, string $secret)
+    public function __construct(string $key, string $secret, string $domain = '')
     {
         $this->key    = $key;
         $this->secret = $secret;
+        $this->domain = $domain;
     }
 
     /**
@@ -62,5 +67,15 @@ class Consumer
     public function getSecret(): string
     {
         return (string) $this->secret;
+    }
+
+    /**
+     * Get Consumer domain
+     *
+     * @return string Consumer domain
+     */
+    public function getDomain(): string
+    {
+        return (string) $this->domain;
     }
 }

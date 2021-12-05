@@ -171,6 +171,7 @@ class Core
             'state'        => $_REQUEST['state'],
             'key'          => $consumer['key'],
             'secret'       => $consumer['secret'],
+            'domain'       => $consumer['domain'],
             'redirect_uri' => self::getRedirectUri(),
         ]);
         $token = $provider->requestAccessToken($_REQUEST);

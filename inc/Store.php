@@ -35,6 +35,7 @@ class Store
         $res = [
             'key'    => '',
             'secret' => '',
+            'domain' => '',
         ];
 
         $rs = $this->core->blog->settings->{PLUGIN_ID}->get($provider);
@@ -45,6 +46,7 @@ class Store
             $res = [
                 'key'    => $rs['key'] ?? '',
                 'secret' => $rs['secret'] ?? '',
+                'domain' => $rs['domain'] ?? '',
             ];
         } else {
             $this->setConsumer($provider);
@@ -53,11 +55,11 @@ class Store
         return $res;
     }
 
-    public function setConsumer(string $provider, string $key = '', string $secret = ''): void
+    public function setConsumer(string $provider, string $key = '', string $secret = '', string $domain = ''): void
     {
         $this->core->blog->settings->{PLUGIN_ID}->put(
             $provider,
-            json_encode(['key' => $key, 'secret' => $secret]),
+            json_encode(['key' => $key, 'secret' => $secret, 'domain' => $domain]),
             'string',
             'consumer credentials',
             true,

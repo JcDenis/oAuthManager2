@@ -114,7 +114,7 @@ abstract class Provider
             throw new Exception('Consumer is not configured');
         }
 
-        return new Consumer($config['key'], $config['secret']);
+        return new Consumer($config['key'], $config['secret'], $config['domain'] ?? '');
     }
 
     /**
@@ -212,6 +212,28 @@ abstract class Provider
     public function toArrayScope(string $scope): array
     {
         return explode($this->getDelimiterScope() ?: ' ', $scope);
+    }
+
+    /**
+     * Does provider required domain
+     *
+     * This is a custom base URI for request.
+     *
+     * @return boolean Domain is required
+     */
+    public function requireDomain(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Get provider (consumer) domain
+     *
+     * @return string Domain
+     */
+    public function getDomain(): string
+    {
+        return $this->consumer->getDomain();
     }
 
     /**
