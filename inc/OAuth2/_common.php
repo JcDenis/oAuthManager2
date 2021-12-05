@@ -25,6 +25,7 @@ spl_autoload_register('oauth2_autoload');
 
 if (!defined('OAUTH2_DEFAULT_PROVIDERS')) {
     $default_providers = [
+        OAuth2\Provider\Auth0::getId()     => OAuth2\Provider\Auth0::class,
         OAuth2\Provider\Facebook::getId()  => OAuth2\Provider\Facebook::class,
         OAuth2\Provider\Github::getId()    => OAuth2\Provider\Github::class,
         OAuth2\Provider\Instagram::getId() => OAuth2\Provider\Instagram::class,
