@@ -111,10 +111,10 @@ class Http
 
     /**
      * Parse headers
-     * 
+     *
      * @param  resource $r          CurlHandle resourse
      * @param  string   $header     Headers
-     * 
+     *
      * @return integer              Lengh
      */
     protected function parseHeaders($r, string $header): int

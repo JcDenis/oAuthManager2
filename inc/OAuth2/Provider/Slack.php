@@ -19,7 +19,7 @@ use OAuth2\Provider;
 class Slack extends Provider
 {
     // todo: move this to Client
-    protected $scope = ['chat:write', 'channels:history', 'channels:join', ];
+    protected $scope = ['chat:write', 'channels:history', 'channels:join'];
 
     public static function getId(): string
     {

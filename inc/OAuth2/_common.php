@@ -23,7 +23,6 @@ function oauth2_autoload(string $name): void
 }
 spl_autoload_register('oauth2_autoload');
 
-
 if (!defined('OAUTH2_DEFAULT_PROVIDERS')) {
     $default_providers = [
         OAuth2\Provider\Facebook::getId()  => OAuth2\Provider\Facebook::class,

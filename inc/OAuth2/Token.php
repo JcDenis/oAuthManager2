@@ -30,7 +30,7 @@ class Token
 
     /**
      * Token constructor
-     * 
+     *
      * @param array $config Token configuration
      */
     public function __construct(array $config)

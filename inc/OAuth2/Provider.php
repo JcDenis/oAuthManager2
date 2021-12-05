@@ -39,7 +39,7 @@ abstract class Provider
      */
     public function __construct(array $config, Http $http)
     {
-        $this->http     = new Http();
+        $this->http = new Http();
 
         if (empty($config)) {
             $config = [
@@ -94,7 +94,7 @@ abstract class Provider
 
     /**
      * Get provider console url
-     * 
+     *
      * This is the URL where you can setup your apps.
      *
      * @return string Console url
@@ -413,7 +413,7 @@ abstract class Provider
      *
      * @param  array  $parameters request parameters
      * @param  array  $headers    request headers
-     * 
+     *
      * @return Token              Token instance
      */
     public function getRefreshToken(array $parameters, array $headers): Token

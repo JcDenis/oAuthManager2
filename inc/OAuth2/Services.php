@@ -27,7 +27,7 @@ class Services
 
     /**
      * Services constructor
-     * 
+     *
      * @param array     $disabled List of disabled providers by id
      * @param Http|null $http     Http instance
      */
@@ -60,10 +60,10 @@ class Services
 
     /**
      * Check if a provider is disabled
-     * 
+     *
      * @param  string       $id    provider id
      * @param  bool|boolean $throw Throw exception if it is disabled
-     * 
+     *
      * @return boolean             Is disabled
      */
     public function hasDisabledProvider(string $id, bool $throw = false): bool
@@ -78,7 +78,7 @@ class Services
 
     /**
      * Add a provider by id/classname
-     * 
+     *
      * @param string $id    provider id
      * @param string $class provider classname
      */
@@ -91,10 +91,10 @@ class Services
 
     /**
      * Check if a provider is added
-     * 
+     *
      * @param  string       $id    provider id
      * @param  bool|boolean $throw Throw exception if it not is added
-     * 
+     *
      * @return boolean             Is added (even if it is disabled)
      */
     public function hasProvider(string $id, bool $throw = false): bool
@@ -126,7 +126,7 @@ class Services
         try {
             /** @var Provider $provider */
             $provider = new $class($config, $http ?? $this->http);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             throw new Exception('Failed to load provider ' . $id);
         }
 
